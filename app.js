@@ -30,10 +30,26 @@ app.get("/", (req, res) => {
     res.render("home");
 });
 
-app.get("/login", (req, res) => {
-    res.render("login");
-});
+app.route("/login")
+    .get((req, res) => {
+        res.render("login");
+    });
 
-app.get("/register", (req, res) => {
-    res.render("register");
-});
+app.route("/register")
+    .get((req, res) => {
+        res.render("register");
+    })
+    .post((req, res) => {
+        const newUser = new User({
+            email: req.body.username,
+            password: req.body.password
+        });
+
+        newUser.save().then((newUser) => {
+            if (newUser === null) {
+                res.send("Error creating new user");
+            } else {
+                res.render("secrets");
+            }
+        });
+    });
