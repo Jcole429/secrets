@@ -15,3 +15,6 @@ Salting and hashing passwords with bcrypt
 
 ## Level 5 Authentication
 Add cookies and sessions with Passport.js
+
+## Level 6 Authentication
+Add OAath 2.0 authentication with google
