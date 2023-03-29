@@ -33,6 +33,19 @@ app.get("/", (req, res) => {
 app.route("/login")
     .get((req, res) => {
         res.render("login");
+    })
+    .post((req, res) => {
+        User.findOne({ email: req.body.username }).then((foundUser) => {
+            if (foundUser === null) {
+                res.send("User not found");
+            } else {
+                if (foundUser.password === req.body.password) {
+                    res.render("secrets");
+                } else {
+                    res.send("Incorrect password");
+                }
+            }
+        })
     });
 
 app.route("/register")
