@@ -12,3 +12,6 @@ Hashing passwords with md5
 
 ## Level 4 Authentication
 Salting and hashing passwords with bcrypt
+
+## Level 5 Authentication
+Add cookies and sessions with Passport.js
