@@ -5,7 +5,9 @@ const bodyParser = require("body-parser");
 const ejs = require("ejs");
 const path = require("path");
 const mongoose = require("mongoose");
-const md5 = require("md5");
+const bcrypt = require("bcrypt");
+
+const saltRounds = 10;
 
 const app = express();
 
@@ -41,11 +43,17 @@ app.route("/login")
             if (foundUser === null) {
                 res.send("User not found");
             } else {
-                if (foundUser.password === md5(req.body.password)) {
-                    res.render("secrets");
-                } else {
-                    res.send("Incorrect password");
-                }
+                bcrypt.compare(req.body.password, foundUser.password, (err, result) => {
+                    if (err) {
+                        res.send(err);
+                    } else {
+                        if (result == true) {
+                            res.render("secrets");
+                        } else {
+                            res.send("Incorrect password");
+                        }
+                    }
+                });
             }
         })
     });
@@ -55,16 +63,21 @@ app.route("/register")
         res.render("register");
     })
     .post((req, res) => {
-        const newUser = new User({
-            email: req.body.username,
-            password: md5(req.body.password)
-        });
-
-        newUser.save().then((newUser) => {
-            if (newUser === null) {
-                res.send("Error creating new user");
+        bcrypt.hash(req.body.password, saltRounds, (err, hash) => {
+            if (err) {
+                res.send(err);
             } else {
-                res.render("secrets");
+                const newUser = new User({
+                    email: req.body.username,
+                    password: hash
+                });
+                newUser.save().then((newUser) => {
+                    if (newUser == null) {
+                        res.send("Error creating new user");
+                    } else {
+                        res.render("secrets");
+                    }
+                });
             }
-        });
+        })
     });
